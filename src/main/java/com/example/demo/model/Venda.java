@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -28,13 +29,12 @@ public class Venda {
     public void setId(Long id) {
         this.id = id;
     }
-
-    @ManyToMany
+    
+    @ManyToOne
     public List<Produto> getProdutos() {
         return produtos;
     }
 
-    
     public void setProdutos(List<Produto> produtos) {
         this.produtos = produtos;
     }

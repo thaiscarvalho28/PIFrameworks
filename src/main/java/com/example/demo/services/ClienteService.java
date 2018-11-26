@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.model.Categoria;
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class ClienteService {
    public Cliente buscaCliente(Long id) {
         return clienteRepository.findById(id).get();
     }
+   public Cliente autenticarCliente(Cliente cli){
+       return clienteRepository.findByEmailAndSenha(cli.getEmail(),cli.getSenha());
+   }
+
+    
 
 }
