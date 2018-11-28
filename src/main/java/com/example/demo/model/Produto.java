@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Produto {
+    
     private int id;
     private String nome;
     private double preco;
