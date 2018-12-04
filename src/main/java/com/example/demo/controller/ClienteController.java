@@ -79,6 +79,8 @@ public static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setSubject(cliAuth.getEmail());
         jwtBuilder.setExpiration(new Date(System.currentTimeMillis()+10*60*1000));
+        jwtBuilder.signWith(key);
+        //adicionar o id do carrinho no token
         
         String token = jwtBuilder.compact();
         

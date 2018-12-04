@@ -3,17 +3,18 @@ package com.example.demo.model;
 
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
 public class Carrinho {
     private Long id;
-    private List<Produto> produtos;
+    private List<ItemCarrinho> itensCarrinho;
     private Date expireTime;
     private Cliente cliente;
 
@@ -43,15 +44,17 @@ public class Carrinho {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
-
-    @ManyToMany
-    public List<Produto> getProdutos() {
-        return produtos;
+    
+    
+    @OneToMany (cascade = CascadeType.REMOVE, mappedBy = "carrinho")
+    public List<ItemCarrinho> getItensCarrinho() {
+        return itensCarrinho;
     }
 
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
+    public void setItensCarrinho(List<ItemCarrinho> itensCarrinho) {
+        this.itensCarrinho = itensCarrinho;
     }
+    
      
     
 }
