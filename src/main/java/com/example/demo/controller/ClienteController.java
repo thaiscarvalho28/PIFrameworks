@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Carrinho;
 import com.example.demo.model.Cliente;
+import com.example.demo.services.CarrinhoService;
 import com.example.demo.services.ClienteService;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtBuilder;
@@ -8,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,8 @@ public class ClienteController {
 public static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     @Autowired
     ClienteService clienteService;
-
+    CarrinhoService carrinhoService;
+    
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity cadastrarCliente(@RequestBody Cliente cli) {
@@ -76,11 +80,17 @@ public static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         if(cliAuth ==null || cliAuth.getEmail().equals("") || cliAuth.getSenha().equals("")){
             return new ResponseEntity<>(cliAuth, HttpStatus.FORBIDDEN);
         }
+        //passar o id do carrinho no token
+        Carrinho cs;
+        cs = carrinhoService.buscaCarrinhoPorCliente(cli);
+        
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setSubject(cliAuth.getEmail());
         jwtBuilder.setExpiration(new Date(System.currentTimeMillis()+10*60*1000));
-        jwtBuilder.signWith(key);
-        //adicionar o id do carrinho no token
+       //adicionar o id do carrinho no token
+       jwtBuilder.claim("idCarrinho",cs.getId());
+       jwtBuilder.signWith(key);
+        
         
         String token = jwtBuilder.compact();
         

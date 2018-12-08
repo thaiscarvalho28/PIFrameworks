@@ -8,6 +8,8 @@ package com.example.demo.services;
 import com.example.demo.model.Carrinho;
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.CarrinhoRepository;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CarrinhoService {
+    
+   private final long TEMPOEXPIRACAO = TimeUnit.DAYS.toMillis(10);
     
      @Autowired
      CarrinhoRepository carrinhoRepository;
@@ -28,10 +32,17 @@ public class CarrinhoService {
                 car = new Carrinho();
                 car.setCliente(cli);
              return   carrinhoRepository.save(car);
+             //se ja existe retorna o carrinho existente
             }  else{
+                //se o tempo do carrinho já expirou de acordo com a data atual
+                if(car.getExpireTime().before(new Date(System.currentTimeMillis()))){
+                    //limpa o carrinho 
+                    //pegar o carrinho e limpa
+                    //car. metodo que vai limpar ele
+                }
                 return car;
-            }  
-        
+            }
+            
     }
     
 }

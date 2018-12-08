@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -33,7 +34,8 @@ public class ItemCarrinho {
         this.id = id;
     }
     
-    @OneToOne
+    //a tabela pode ter varios itens de um produto
+    @ManyToOne()
     public Produto getProduto() {
         return produto;
     }
