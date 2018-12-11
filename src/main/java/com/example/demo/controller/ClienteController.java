@@ -31,6 +31,7 @@ public class ClienteController {
 public static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     @Autowired
     ClienteService clienteService;
+     @Autowired
     CarrinhoService carrinhoService;
     
     @RequestMapping(method = RequestMethod.POST,
@@ -82,8 +83,8 @@ public static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         }
         //passar o id do carrinho no token
         Carrinho cs;
-        cs = carrinhoService.buscaCarrinhoPorCliente(cli);
-        
+        cs = carrinhoService.buscaCarrinhoPorCliente(cliAuth);
+            
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setSubject(cliAuth.getEmail());
         jwtBuilder.setExpiration(new Date(System.currentTimeMillis()+10*60*1000));
