@@ -30,7 +30,17 @@ public class CarrinhoController {
             // e o header com o token que contem o id do carrinho do cliente
     ResponseEntity adicionarProdutoNoCarrinho(@RequestBody Produto prod,@RequestHeader HttpHeaders headers) {
         
+          retornaIdCarrinhoPeloToken(headers);
+        
+        
         return new ResponseEntity(HttpStatus.CREATED);
 
+    }
+    
+    
+    private void retornaIdCarrinhoPeloToken(HttpHeaders headers){
+        
+         String token=headers.get("Authorization").get(0);
+         
     }
 }
