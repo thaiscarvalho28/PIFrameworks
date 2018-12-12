@@ -3,21 +3,26 @@ package com.example.demo.model;
 
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
 public class Venda {
     private Long id;
-    private List<Produto> produtos;
-    private Cliente client;
-    private Date data;
+     private Cliente client;
+     private Date data;
     private double valor;
+    private List<Produto> produtos;
+   
+    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +43,7 @@ public class Venda {
         this.produtos = produtos;
     }
     
-    @ManyToOne()
+    @OneToOne()
     public Cliente getClient() {
         return client;
     }
@@ -47,6 +52,7 @@ public class Venda {
         this.client = client;
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getData() {
         return data;
     }

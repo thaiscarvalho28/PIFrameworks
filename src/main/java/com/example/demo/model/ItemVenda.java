@@ -11,19 +11,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 /**
  *
  * @author Jaqueline
  */
 @Entity
-public class ItemCarrinho {
+public class ItemVenda {
     
     private Long id;
     private Produto produto;
-    private int quantidade;
-    private Carrinho carrinho;
+    private double quantidade;
+    private double custo;
+    private double valor;
+    private Venda venda;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +35,7 @@ public class ItemCarrinho {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    //a tabela pode ter varios itens de um produto
+
     @ManyToOne()
     public Produto getProduto() {
         return produto;
@@ -45,22 +45,37 @@ public class ItemCarrinho {
         this.produto = produto;
     }
 
-    public int getQuantidade() {
+    public double getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(double quantidade) {
         this.quantidade = quantidade;
     }
-    
+
     @JsonIgnore
-    @ManyToOne
-    public Carrinho getCarrinho() {
-        return carrinho;
+    @ManyToOne()
+    public Venda getVenda() {
+        return venda;
     }
 
-    public void setCarrinho(Carrinho carrinho) {
-        this.carrinho = carrinho;
+    public void setVenda(Venda venda) {
+        this.venda = venda;
     }
-    
+
+    public double getCusto() {
+        return custo;
+    }
+
+    public void setCusto(double custo) {
+        this.custo = custo;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+}
 }
