@@ -24,7 +24,9 @@ public class CarrinhoService {
     
     
    private final long TEMPOEXPIRACAO = TimeUnit.DAYS.toMillis(10);
-    
+    @Autowired 
+    ItemCarrinhoService itemCarrinhoService;
+   
      @Autowired
      CarrinhoRepository carrinhoRepository;
     public Carrinho buscaCarrinhoPorCliente(Cliente cli){
@@ -33,6 +35,9 @@ public class CarrinhoService {
        //se nao existe carrinho cria ele aqui
             if(car==null){
                 car = new Carrinho();
+                //define quando vai expirar o carrinho se for um carrinho novo
+                // data atual + 10 dias > TEMPOEXPIRACAO
+                car.setExpireTime(new Date(TEMPOEXPIRACAO+System.currentTimeMillis()));
                 car.setCliente(cli);
              return   carrinhoRepository.save(car);
              //se ja existe retorna o carrinho existente
@@ -42,7 +47,8 @@ public class CarrinhoService {
                     //limpa o carrinho 
                     //pegar o carrinho e limpa
                     //car. metodo que vai limpar ele
-                    car.setItensCarrinho(null);
+                    //passando o carrinho que vai limpar 
+                    itemCarrinhoService.limparCarrinho(car);
                     return car;
                 }
                 return car;
