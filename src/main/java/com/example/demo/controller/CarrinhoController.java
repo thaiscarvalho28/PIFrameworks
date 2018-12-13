@@ -9,6 +9,11 @@ import com.example.demo.model.Carrinho;
 import com.example.demo.model.ItemCarrinho;
 import com.example.demo.model.Produto;
 import com.example.demo.services.CarrinhoService;
+import com.example.demo.services.ItemCarrinhoService;
+import com.example.demo.services.ProdutoService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,53 +32,81 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/auth/carrinho")
 public class CarrinhoController {
-    
-     @Autowired
-     CarrinhoService carrinhoService;
-    
-      @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-            //passa o id e a quantidade no body
-            // e o header com o token que contem o id do carrinho do cliente
-         ResponseEntity adicionarProdutoNoCarrinho(@RequestBody Produto prod,@RequestHeader HttpHeaders headers) {
-        
-          //cria o carrinho passando o id do carrinho como parametro
-          
-          Carrinho carrinho = new Carrinho();
-          
-          carrinho.setId(retornaIdCarrinhoPeloToken(headers));
-          
-        ItemCarrinho itemCarrinho = new ItemCarrinho();
-        
-        itemCarrinho.setProduto(prod);
-        itemCarrinho.setId(prod.getId());
-        itemCarrinho.setQuantidade(prod.getQuantidade());
-        
-        
-        //colocar todos os atributos que tem em item carrinho 
-        //quantidade ta dentro de produto
-        //set o produto pra denttro de item carrinho 
-        // salvar o itemcarrinho 
-        
-        
-        
-        //criar metodo salvar no itemcarrinho service
-        carrinhoService.cadastrarCarrinho(carrinho);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+    @Autowired
+    CarrinhoService carrinhoService;
+
+    @Autowired
+    ItemCarrinhoService itemCarrinhoService;
+
+    @Autowired
+    ProdutoService produtoService;
+
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    //passa o id e a quantidade no body
+    // e o header com o token que contem o id do carrinho do cliente
+    ResponseEntity adicionarProdutoNoCarrinho(@RequestBody Produto prod, @RequestHeader HttpHeaders headers) {
+
+        //cria o carrinho passando o id do carrinho como parametro
+        Carrinho carrinho = new Carrinho();
+
+        carrinho.setId(retornaIdCarrinhoPeloToken(headers));
+
+        //produto que tem no estoque
+        Produto produtoEstoque = produtoService.buscaProduto(prod.getId());
+
+        ItemCarrinho iCarrinho = itemCarrinhoService.buscaProdutoNoCarrinho(carrinho, prod);
+
+        if (iCarrinho == null) {
+            // item nao foi add no carrinho ainda
+            if (produtoEstoque.getQuantidade() >= prod.getQuantidade()) {
+                //se a qtd no estoque for maior ou igual a quantidade inserida no carrinho
+                //CRIA O ITEM NO CARRINHO
+                ItemCarrinho itemCarrinho = new ItemCarrinho();
+                //colocar todos os atributos que tem em item carrinho 
+                //quantidade ta dentro de produto
+                itemCarrinho.setProduto(prod);
+                itemCarrinho.setQuantidade(prod.getQuantidade());
+                itemCarrinho.setCarrinho(carrinho);
+
+                itemCarrinhoService.salvaItemCarrinho(itemCarrinho);
+
+                return new ResponseEntity(HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity("A quantidade no estoque está indisponível!",HttpStatus.BAD_REQUEST);
+            }
+        }else{
+            //ver se a quantidade nao ultrapassa a do estoque
+            if(produtoEstoque.getQuantidade() >= (iCarrinho.getQuantidade()+prod.getQuantidade())){
+                iCarrinho.setQuantidade(iCarrinho.getQuantidade()+prod.getQuantidade());
+                itemCarrinhoService.salvaItemCarrinho(iCarrinho);
+                return new ResponseEntity(HttpStatus.CREATED);
+            }else{
+                return new ResponseEntity("A quantidade no estoque está indisponível!",HttpStatus.BAD_REQUEST); 
+            }
+        }
 
     }
-    
-    
-    private long retornaIdCarrinhoPeloToken(HttpHeaders headers){
-        
+
+    private long retornaIdCarrinhoPeloToken(HttpHeaders headers) {
+
         //converter em long
-         String token=headers.get("Authorization").get(0);
-         long Token = Long.parseLong(token);
-         return Token;
-         
-   
-         
-         
+        String tokenInteiro = headers.get("Authorization").get(0);
+        String token = tokenInteiro.substring(7);
+
+        long recebeIdCarrinho = 0;
+        try {
+            Claims claim;
+            claim = Jwts.parser()
+                    .setSigningKey(ClienteController.key)
+                    .parseClaimsJws(token).getBody();
+
+            recebeIdCarrinho = Long.parseLong("" + claim.get("idCarrinho"));
+
+        } catch (JwtException e) {
+
+        }
+        return recebeIdCarrinho;
     }
 }
