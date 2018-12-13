@@ -25,4 +25,7 @@ public interface ItemCarrinhoRepository extends JpaRepository<ItemCarrinho, Long
     
     
     public ItemCarrinho findByCarrinhoAndProduto(Carrinho carrinho, Produto prod);
+    
+    
+    
 }

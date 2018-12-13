@@ -68,6 +68,8 @@ public class CarrinhoService {
         carrinhoRepository.deleteById(id);
     }
     
-    
+    public Carrinho buscaCarrinho(Long id) {
+        return carrinhoRepository.findById(id).get();
+}
     
 }

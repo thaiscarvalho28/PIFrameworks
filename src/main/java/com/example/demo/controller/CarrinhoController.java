@@ -109,4 +109,13 @@ public class CarrinhoController {
         }
         return recebeIdCarrinho;
     }
+    
+    public Carrinho retornaTodoCarrinho(HttpHeaders headers) {
+      
+        Long id = retornaIdCarrinhoPeloToken(headers);
+
+        Carrinho c = carrinhoService.buscaCarrinho(id);
+
+        return c;
+}
 }
