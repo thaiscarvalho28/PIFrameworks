@@ -9,6 +9,8 @@ import com.example.demo.model.Categoria;
 import com.example.demo.model.Produto;
 import com.example.demo.services.CategoriaService;
 import com.example.demo.services.ProdutoService;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,5 +69,23 @@ public class ProdutoController {
         }
 
         return new ResponseEntity(prod, HttpStatus.OK);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET,
+             produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Produto> mostraTodos() {
+        
+       
+        List<Produto> listprod = new ArrayList();
+        try {
+            
+            listprod = produtoService.mostraTodos();
+            
+
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity(listprod, HttpStatus.OK);
     }
 }

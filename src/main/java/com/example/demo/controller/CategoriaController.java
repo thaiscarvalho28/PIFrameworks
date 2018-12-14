@@ -10,6 +10,8 @@ import com.example.demo.model.Categoria;
 import com.example.demo.model.Cliente;
 import com.example.demo.services.CategoriaService;
 import com.example.demo.services.ClienteService;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,6 +71,24 @@ public class CategoriaController {
         }
 
         return new ResponseEntity(cat, HttpStatus.OK);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Categoria> mostraTodas() {
+        
+        Categoria cat;
+        List<Categoria> listCat = new ArrayList();
+        try {
+            //cat = categoriaService.buscaCategoria(id);
+            listCat = categoriaService.mostraTodas();
+            
+
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity(listCat, HttpStatus.OK);
     }
     
 }

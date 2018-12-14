@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 /**
@@ -41,5 +42,9 @@ public class CategoriaService {
 
     public Categoria buscaCategoria(Long id) {
         return categoriaRepository.findById(id).get();
+    }
+    
+    public List<Categoria> mostraTodas() {
+        return categoriaRepository.findAll();
     }
 }
